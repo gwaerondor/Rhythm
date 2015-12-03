@@ -10,12 +10,14 @@ public class Song {
 	private String artistName;
 	private String location;
 	private Music musicPlayer;
+	private Chart chart;
 	
 	public Song(String songName, String artistName, int bpm, String location){
 		this.bpm = bpm;
 		this.songName = songName;
 		this.artistName = artistName;
 		this.location = location;
+		this.chart = new Chart(location + ".chart");
 	}
 	
 	public String toString() {
@@ -35,4 +37,7 @@ public class Song {
 		musicPlayer.fade(2500, 0, true);
 	}
 	
+	public Chart getChart() {
+		return this.chart;
+	}
 }
