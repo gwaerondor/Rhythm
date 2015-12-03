@@ -79,7 +79,8 @@ public class Game extends BasicGame {
 			g.drawString(currentSong.toString(), 100, 10);
 			lane.draw();
 			lane.drawExplosions(currentlyExploding);
-			lane.drawNotes(currentSong.currentBeat());
+			lane.drawNote(1,currentSong.currentBeat());
+			lane.drawNote(4,currentSong.currentBeat());
 		} else {
 			g.drawString("Press number keys to start a song.", 100, 10);
 			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);

@@ -1,7 +1,6 @@
 package game;
 
 import java.util.ArrayList;
-
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
@@ -13,7 +12,7 @@ public class Lane {
 	private Image explosion;
 	private Image noteImage;
 	private int[] sublanes;
-
+	
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
 		this.yPositionOfNoteMark = yPositionOfNoteMark;
 		this.sublanes = sublanes;
@@ -67,6 +66,10 @@ public class Lane {
 		}
 	}
 
+	private int getXPositionForSublane(int sublaneNumber) {
+		return 50 + sublaneNumber*(widthOfSubLanes+3);
+	}
+	
 	private int getLaneForButton(int button) {
 		for (int i = 0; i < sublanes.length; i++) {
 			if (sublanes[i] == button) {
@@ -76,8 +79,8 @@ public class Lane {
 		return -1;
 	}
 	
-	public void drawNotes(float currentBeat) {
-		noteImage.draw(50,50 + (currentBeat),widthOfSubLanes,6);
+	public void drawNote(int lane, float currentBeat) {
+		noteImage.draw(getXPositionForSublane(lane),50 + (currentBeat),widthOfSubLanes,6);
 	}
 	
 	private int getStartPositionForButton(int button) {
