@@ -40,4 +40,8 @@ public class Song {
 	public Chart getChart() {
 		return this.chart;
 	}
+	
+	public float currentPosition() {
+		return musicPlayer.getPosition();
+	}
 }

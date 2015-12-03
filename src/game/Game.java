@@ -1,4 +1,5 @@
 package game;
+
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,17 +11,15 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-public class Game extends BasicGame
-{
+public class Game extends BasicGame {
 	private final int POSITION_OF_NOTE_LINE = 550;
 	Song currentSong;
 	Lane lane;
 	int sublaneButtons[];
 	Image songBanner;
 	ArrayList<Integer> currentlyExploding;
-	
-	public Game(String gamename)
-	{
+
+	public Game(String gamename) {
 		super(gamename);
 	}
 
@@ -42,45 +41,50 @@ public class Game extends BasicGame
 	public void update(GameContainer gc, int i) throws SlickException {
 		Input input = gc.getInput();
 		currentlyExploding.clear();
-		if (input.isKeyPressed(Input.KEY_1)) {
-			currentSong = new Song("Starmine", "Ryu*", 182, "/songs/starmine.ogg");
-			currentSong.playSong();
-		} else if (input.isKeyPressed(Input.KEY_P)) {
+		if (currentSong == null) {
+			if (input.isKeyPressed(Input.KEY_1)) {
+				currentSong = new Song("Starmine", "Ryu*", 182, "/songs/starmine.ogg");
+				currentSong.playSong();
+			}
+
+		} 
+		
+		if (input.isKeyPressed(Input.KEY_P)) {
 			currentSong.stopSong();
 			currentSong = null;
 		}
-		
-		for(int button : sublaneButtons) {
-			if(input.isKeyDown(button)) {
-				currentlyExploding.add(button);
+
+		if (currentSong != null) {
+			for (int button : sublaneButtons) {
+				if (input.isKeyDown(button)) {
+					currentlyExploding.add(button);
+				}
+				if (input.isKeyPressed(button)) {
+					System.out.println("Button " + button + " pressed at song time: " + currentSong.currentPosition());
+				}
 			}
 		}
 	}
 
-	public void render(GameContainer gc, Graphics g) throws SlickException
-	{
+	public void render(GameContainer gc, Graphics g) throws SlickException {
 		if (currentSong != null) {
 			g.drawString(currentSong.toString(), 100, 10);
 			lane.draw();
 			lane.drawExplosions(currentlyExploding);
 		} else {
 			g.drawString("Press number keys to start a song.", 100, 10);
-			g.drawString("1:", 80, 50 + songBanner.getHeight()/2);
+			g.drawString("1:", 80, 50 + songBanner.getHeight() / 2);
 			songBanner.draw(100, 50);
 		}
 	}
 
-	public static void main(String[] args)
-	{
-		try
-		{
+	public static void main(String[] args) {
+		try {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Game("Rhythm"));
 			appgc.setDisplayMode(800, 600, false);
 			appgc.start();
-		}
-		catch (SlickException ex)
-		{
+		} catch (SlickException ex) {
 			Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
