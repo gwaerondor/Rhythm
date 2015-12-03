@@ -16,7 +16,7 @@ public class Game extends BasicGame {
 	Song currentSong;
 	Lane lane;
 	int sublaneButtons[];
-	Image songBanner;
+	Image[] songBanners;
 	ArrayList<Integer> currentlyExploding;
 
 	public Game(String gamename) {
@@ -25,17 +25,21 @@ public class Game extends BasicGame {
 
 	public void init(GameContainer gc) throws SlickException {
 		gc.setTargetFrameRate(60);
-		sublaneButtons = new int[7];
+		sublaneButtons = new int[8];
 		sublaneButtons[0] = Input.KEY_Z;
-		sublaneButtons[1] = Input.KEY_S;
-		sublaneButtons[2] = Input.KEY_X;
-		sublaneButtons[3] = Input.KEY_D;
-		sublaneButtons[4] = Input.KEY_C;
-		sublaneButtons[5] = Input.KEY_F;
-		sublaneButtons[6] = Input.KEY_V;
-		songBanner = new Image("graphics/Starmine_banner.png");
+		sublaneButtons[1] = Input.KEY_X;
+		sublaneButtons[2] = Input.KEY_C;
+		sublaneButtons[3] = Input.KEY_V;
+		sublaneButtons[4] = Input.KEY_B;
+		sublaneButtons[5] = Input.KEY_N;
+		sublaneButtons[6] = Input.KEY_M;
+		sublaneButtons[7] = Input.KEY_COMMA;
+
+		songBanners = new Image[2];
+		songBanners[0] = new Image("graphics/Starmine_banner.png");
+		songBanners[1] = new Image("graphics/Hana_Ranman_banner.png");
 		currentlyExploding = new ArrayList<Integer>();
-		lane = new Lane(POSITION_OF_NOTE_LINE, sublaneButtons, 50);
+		lane = new Lane(POSITION_OF_NOTE_LINE, sublaneButtons, 40);
 	}
 
 	public void update(GameContainer gc, int i) throws SlickException {
@@ -43,12 +47,15 @@ public class Game extends BasicGame {
 		currentlyExploding.clear();
 		if (currentSong == null) {
 			if (input.isKeyPressed(Input.KEY_1)) {
-				currentSong = new Song("Starmine", "Ryu*", 182, "/songs/starmine.ogg");
+				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg");
+				currentSong.playSong();
+			} else if (input.isKeyPressed(Input.KEY_2)) {
+				currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg");
 				currentSong.playSong();
 			}
 
-		} 
-		
+		}
+
 		if (input.isKeyPressed(Input.KEY_P)) {
 			currentSong.stopSong();
 			currentSong = null;
@@ -60,7 +67,8 @@ public class Game extends BasicGame {
 					currentlyExploding.add(button);
 				}
 				if (input.isKeyPressed(button)) {
-					System.out.println("Button " + button + " pressed at song time: " + currentSong.currentPosition());
+					System.out.println("Button " + Input.getKeyName(button) + " pressed at "
+							+ currentSong.currentBPMAndPosition());
 				}
 			}
 		}
@@ -71,10 +79,13 @@ public class Game extends BasicGame {
 			g.drawString(currentSong.toString(), 100, 10);
 			lane.draw();
 			lane.drawExplosions(currentlyExploding);
+			lane.drawNotes(currentSong.currentBeat());
 		} else {
 			g.drawString("Press number keys to start a song.", 100, 10);
-			g.drawString("1:", 80, 50 + songBanner.getHeight() / 2);
-			songBanner.draw(100, 50);
+			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
+			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight()/2);
+			songBanners[0].draw(100, 50);
+			songBanners[1].draw(100, 50+songBanners[0].getHeight());
 		}
 	}
 

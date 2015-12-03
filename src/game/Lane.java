@@ -11,6 +11,7 @@ public class Lane {
 	private Image line;
 	private Image laneSeparator;
 	private Image explosion;
+	private Image noteImage;
 	private int[] sublanes;
 
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
@@ -21,6 +22,7 @@ public class Lane {
 			this.line = new Image("graphics/Note_line.png");
 			this.laneSeparator = new Image("graphics/Lane_separator.png");
 			this.explosion = new Image("graphics/Explosion.png");
+			this.noteImage = new Image("graphics/Note.png");
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
@@ -72,6 +74,10 @@ public class Lane {
 			}
 		}
 		return -1;
+	}
+	
+	public void drawNotes(float currentBeat) {
+		noteImage.draw(50,50 + (currentBeat),widthOfSubLanes,6);
 	}
 	
 	private int getStartPositionForButton(int button) {

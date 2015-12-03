@@ -10,14 +10,15 @@ public class Song {
 	private String artistName;
 	private String location;
 	private Music musicPlayer;
-	private Chart chart;
+	private Notechart chart;
 	
 	public Song(String songName, String artistName, int bpm, String location){
 		this.bpm = bpm;
 		this.songName = songName;
 		this.artistName = artistName;
 		this.location = location;
-		this.chart = new Chart(location + ".chart");
+		this.chart = new Notechart(bpm);
+		System.out.println(chart);
 	}
 	
 	public String toString() {
@@ -37,11 +38,18 @@ public class Song {
 		musicPlayer.fade(2500, 0, true);
 	}
 	
-	public Chart getChart() {
-		return this.chart;
-	}
 	
 	public float currentPosition() {
 		return musicPlayer.getPosition();
+	}
+	
+	public float currentBeat() {
+		return bpm * currentPosition();
+	}
+	public String currentBPMAndPosition() {
+		float timePosition = currentPosition();
+		float minutes = musicPlayer.getPosition()/60;
+		float bpmPosition = bpm * minutes;
+		return "BPM pos: "+ bpmPosition+ ", time pos: " + timePosition;
 	}
 }
