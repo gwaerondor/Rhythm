@@ -11,8 +11,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-import game.Notechart.Note;
-
 public class Game extends BasicGame {
 	private final int POSITION_OF_NOTE_LINE = 550;
 	Song currentSong;

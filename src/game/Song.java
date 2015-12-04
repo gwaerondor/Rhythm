@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 
-import game.Notechart.Note;
-
 public class Song {
 	
 	private int bpm;
@@ -14,7 +12,7 @@ public class Song {
 	private String artistName;
 	private String location;
 	private Music musicPlayer;
-	private Notechart chart;
+	private ArrayList<Note> chart;
 	private float startDelay;
 	
 	public Song(String songName, String artistName, int bpm, String location, float startDelay){
@@ -23,7 +21,7 @@ public class Song {
 		this.artistName = artistName;
 		this.location = location;
 		this.startDelay = startDelay;
-		this.chart = new Notechart(bpm);
+		this.chart = ChartFileParser.getChartFromFile(location + ".chart");
 		System.out.println(chart);
 	}
 	
@@ -61,7 +59,7 @@ public class Song {
 	}
 	
 	public ArrayList<Note> getNotes() {
-		return chart.getChart();
+		return chart;
 	}
 	
 	public int getBPM() {

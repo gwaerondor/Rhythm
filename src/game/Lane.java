@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-import game.Notechart.Note;
-
 public class Lane {
 	private final float SPEED_MOD = (float) 0.75; 
 	private int yPositionOfNoteMark;
