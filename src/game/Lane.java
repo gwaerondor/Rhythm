@@ -5,14 +5,19 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 public class Lane {
-	private final float SPEED_MOD = (float) 0.75; 
+	private final float SPEED_MOD = (float) 0.75;
 	private int yPositionOfNoteMark;
 	private int widthOfSubLanes;
 	private Image line;
 	private Image laneSeparator;
 	private Image explosion;
 	private Image noteImage;
+	private Image okImage;
+	private Image missImage;
 	private int[] sublanes;
+	private boolean displayOK;
+	private boolean displayMiss;
+	private float displayTime;
 
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
 		this.yPositionOfNoteMark = yPositionOfNoteMark;
@@ -23,6 +28,8 @@ public class Lane {
 			this.laneSeparator = new Image("graphics/Lane_separator.png");
 			this.explosion = new Image("graphics/Explosion.png");
 			this.noteImage = new Image("graphics/Note.png");
+			this.okImage = new Image("graphics/ok.png");
+			this.missImage = new Image("graphics/miss.png");
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
@@ -72,9 +79,9 @@ public class Lane {
 	}
 
 	private int getYPositionForNote(float currentBeat, float targetBeat, int bpm) {
-		return (int) (SPEED_MOD * bpm*(currentBeat - targetBeat))+550;
+		return (int) (SPEED_MOD * bpm * (currentBeat - targetBeat)) + 550;
 	}
-	
+
 	public int getLaneForButton(int button) {
 		for (int i = 0; i < sublanes.length; i++) {
 			if (sublanes[i] == button) {
@@ -83,7 +90,7 @@ public class Lane {
 		}
 		return -1;
 	}
-	
+
 	public void drawNote(int lane, float currentBeat, int bpm) {
 		noteImage.draw(getXPositionForSublane(lane), 50 + (currentBeat), widthOfSubLanes, 6);
 	}
@@ -98,20 +105,55 @@ public class Lane {
 		}
 	}
 
+	public void clearDisplays() {
+		displayOK = false;
+		displayMiss = false;
+	}
+
+	public void drawOK() {
+		if (displayOK == true) {
+			okImage.draw(250, yPositionOfNoteMark / 2);
+		}
+	}
+
+	public void drawMiss() {
+		if (displayMiss == true) {
+			missImage.draw(250, yPositionOfNoteMark / 2);
+		}
+	}
+
 	public boolean noteShouldBeDrawn(Note note, float currentBeat, int bpm) {
 		int yPos = getYPositionForNote(currentBeat, note.getTargetBeat(), bpm);
-		if(yPos > 30){
-			if(yPos < 600) {
-				if(!note.isDestroyed()){
+		if (yPos > 30) {
+			if (yPos < 600) {
+				if (!note.isDestroyed()) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	private int getStartPositionForButton(int button) {
 		int laneNumber = getLaneForButton(button);
 		return 50 + (laneNumber * (widthOfSubLanes + laneSeparator.getWidth()));
+	}
+
+	public void hit(float beat) {
+		clearDisplays();
+		displayOK = true;
+		displayTime = beat;
+	}
+
+	public void miss(float beat) {
+		clearDisplays();
+		displayMiss = true;
+		displayTime = beat;
+	}
+
+	public void updateTimer(float newBeat) {
+		if (displayTime - newBeat < -1.5) {
+			clearDisplays();
+		}
 	}
 }

@@ -18,11 +18,7 @@ public class Note {
 	public int getLane() {
 		return lane;
 	}
-
-	public void destroy() {
-		destroyed = true;
-	}
-
+	
 	public boolean isDestroyed() {
 		return destroyed;
 	}

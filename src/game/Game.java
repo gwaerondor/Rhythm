@@ -19,7 +19,8 @@ public class Game extends BasicGame {
 	Image[] songBanners;
 	ArrayList<Integer> currentlyExploding;
 	ArrayList<Note> currentNotes;
-
+	private int combo;
+	
 	public Game(String gamename) {
 		super(gamename);
 	}
@@ -41,18 +42,21 @@ public class Game extends BasicGame {
 		songBanners[1] = new Image("graphics/Hana_Ranman_banner.png");
 		currentlyExploding = new ArrayList<Integer>();
 		lane = new Lane(POSITION_OF_NOTE_LINE, sublaneButtons, 40);
+		combo = 0;
 	}
 
 	public void update(GameContainer gc, int i) throws SlickException {
 		Input input = gc.getInput();
 		currentlyExploding.clear();
+
 		if (currentSong == null) {
 			if (input.isKeyPressed(Input.KEY_1)) {
-				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg", (float)0.0);
+				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg", (float) 0.0);
 				currentNotes = currentSong.getNotes();
 				currentSong.playSong();
 			} else if (input.isKeyPressed(Input.KEY_2)) {
-				currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg", (float)0.0);
+				currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg",
+						(float) 0.0);
 				currentNotes = currentSong.getNotes();
 				currentSong.playSong();
 			}
@@ -65,6 +69,8 @@ public class Game extends BasicGame {
 		}
 
 		if (currentSong != null) {
+			float currentBeat = currentSong.currentBeat();
+			lane.updateTimer(currentBeat);
 			for (int button : sublaneButtons) {
 				if (input.isKeyDown(button)) {
 					currentlyExploding.add(button);
@@ -73,9 +79,25 @@ public class Game extends BasicGame {
 					int pressedLane = lane.getLaneForButton(button);
 					Note hitNote = currentSong.getNoteCloseToNow(pressedLane);
 					currentSong.destroyNote(hitNote);
+					if (hitNote != null) {
+						lane.hit(currentBeat);
+						combo++;
+					}
 					System.out.println("Button " + Input.getKeyName(button) + " pressed at "
 							+ currentSong.currentBPMAndPosition());
 				}
+			}
+			ArrayList<Note> missedNotes = new ArrayList<Note>();
+			for(Note note : currentSong.getNotes()) {
+				if(note.getTargetBeat() < currentSong.currentBeat()-0.5){
+					missedNotes.add(note);
+					combo = 0;
+					lane.miss(currentSong.currentBeat());
+				}
+			}
+			
+			for(Note note : missedNotes) {
+				currentSong.getNotes().remove(note);
 			}
 		}
 	}
@@ -85,12 +107,17 @@ public class Game extends BasicGame {
 			g.drawString(currentSong.toString(), 100, 10);
 			lane.draw();
 			lane.drawExplosions(currentlyExploding);
-			lane.drawNotes(currentNotes,currentSong.currentBeat(), currentSong.getBPM());
-		//	lane.drawNote(4,currentSong.currentBeat());
+			lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
+			lane.drawOK();
+			lane.drawMiss();
+			if(combo>1){
+				g.drawString("" + combo + " COMBO", 250, lane.getYPositionOfNoteMark()/2+50);
+			}
+			// lane.drawNote(4,currentSong.currentBeat());
 		} else {
 			g.drawString("Press number keys to start a song.", 100, 10);
 			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
-			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight()/2);
+			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);
 			songBanners[0].draw(100, 50);
 			songBanners[1].draw(100, 50 + songBanners[0].getHeight());
 		}
