@@ -11,6 +11,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import game.Notechart.Note;
+
 public class Game extends BasicGame {
 	private final int POSITION_OF_NOTE_LINE = 550;
 	Song currentSong;
@@ -18,6 +20,7 @@ public class Game extends BasicGame {
 	int sublaneButtons[];
 	Image[] songBanners;
 	ArrayList<Integer> currentlyExploding;
+	ArrayList<Note> currentNotes;
 
 	public Game(String gamename) {
 		super(gamename);
@@ -47,10 +50,12 @@ public class Game extends BasicGame {
 		currentlyExploding.clear();
 		if (currentSong == null) {
 			if (input.isKeyPressed(Input.KEY_1)) {
-				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg");
+				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg", (float)0.0);
+				currentNotes = currentSong.getNotes();
 				currentSong.playSong();
 			} else if (input.isKeyPressed(Input.KEY_2)) {
-				currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg");
+				currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg", (float)0.0);
+				currentNotes = currentSong.getNotes();
 				currentSong.playSong();
 			}
 
@@ -79,14 +84,14 @@ public class Game extends BasicGame {
 			g.drawString(currentSong.toString(), 100, 10);
 			lane.draw();
 			lane.drawExplosions(currentlyExploding);
-			lane.drawNote(1,currentSong.currentBeat());
-			lane.drawNote(4,currentSong.currentBeat());
+			lane.drawNotes(currentNotes,currentSong.currentBeat(), currentSong.getBPM());
+		//	lane.drawNote(4,currentSong.currentBeat());
 		} else {
 			g.drawString("Press number keys to start a song.", 100, 10);
 			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
 			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight()/2);
 			songBanners[0].draw(100, 50);
-			songBanners[1].draw(100, 50+songBanners[0].getHeight());
+			songBanners[1].draw(100, 50 + songBanners[0].getHeight());
 		}
 	}
 

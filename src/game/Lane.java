@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import game.Notechart.Note;
+
 public class Lane {
+	private final float SPEED_MOD = (float) 0.75; 
 	private int yPositionOfNoteMark;
 	private int widthOfSubLanes;
 	private Image line;
@@ -12,7 +15,7 @@ public class Lane {
 	private Image explosion;
 	private Image noteImage;
 	private int[] sublanes;
-	
+
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
 		this.yPositionOfNoteMark = yPositionOfNoteMark;
 		this.sublanes = sublanes;
@@ -60,16 +63,20 @@ public class Lane {
 
 	public void drawExplosions(ArrayList<Integer> buttons) {
 		for (int button : buttons) {
-			int startXPosition = getStartPositionForButton(button); 
+			int startXPosition = getStartPositionForButton(button);
 			int halfLanePosition = (yPositionOfNoteMark - 30) / 2;
-			explosion.draw(startXPosition, halfLanePosition, widthOfSubLanes, yPositionOfNoteMark-halfLanePosition);
+			explosion.draw(startXPosition, halfLanePosition, widthOfSubLanes, yPositionOfNoteMark - halfLanePosition);
 		}
 	}
 
 	private int getXPositionForSublane(int sublaneNumber) {
-		return 50 + sublaneNumber*(widthOfSubLanes+3);
+		return 50 + sublaneNumber * (widthOfSubLanes + 3);
 	}
-	
+
+	private int getYPositionForNote(float currentBeat, float targetBeat, int bpm) {
+		return (int) (SPEED_MOD * bpm*(currentBeat - targetBeat))+550;
+	}
+
 	private int getLaneForButton(int button) {
 		for (int i = 0; i < sublanes.length; i++) {
 			if (sublanes[i] == button) {
@@ -78,13 +85,23 @@ public class Lane {
 		}
 		return -1;
 	}
-	
-	public void drawNote(int lane, float currentBeat) {
-		noteImage.draw(getXPositionForSublane(lane),50 + (currentBeat),widthOfSubLanes,6);
+
+	public void drawNote(int lane, float currentBeat, int bpm) {
+		noteImage.draw(getXPositionForSublane(lane), 50 + (currentBeat), widthOfSubLanes, 6);
 	}
-	
+
+	public void drawNotes(ArrayList<Note> notes, float currentBeat, int bpm) {
+		for (Note note : notes) {
+			int yPos = getYPositionForNote(currentBeat, note.getTargetBeat(), bpm);
+			if (yPos > 30 && yPos < 600) {
+				int xPos = getXPositionForSublane(note.getLane());
+				noteImage.draw(xPos, yPos, widthOfSubLanes, 6);
+			}
+		}
+	}
+
 	private int getStartPositionForButton(int button) {
-		int laneNumber = getLaneForButton(button); 
-		return 50 + (laneNumber * (widthOfSubLanes+laneSeparator.getWidth()));
+		int laneNumber = getLaneForButton(button);
+		return 50 + (laneNumber * (widthOfSubLanes + laneSeparator.getWidth()));
 	}
 }

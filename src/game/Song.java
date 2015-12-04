@@ -1,7 +1,11 @@
 package game;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
+
+import game.Notechart.Note;
 
 public class Song {
 	
@@ -11,12 +15,14 @@ public class Song {
 	private String location;
 	private Music musicPlayer;
 	private Notechart chart;
+	private float startDelay;
 	
-	public Song(String songName, String artistName, int bpm, String location){
+	public Song(String songName, String artistName, int bpm, String location, float startDelay){
 		this.bpm = bpm;
 		this.songName = songName;
 		this.artistName = artistName;
 		this.location = location;
+		this.startDelay = startDelay;
 		this.chart = new Notechart(bpm);
 		System.out.println(chart);
 	}
@@ -40,16 +46,25 @@ public class Song {
 	
 	
 	public float currentPosition() {
-		return musicPlayer.getPosition();
+		return musicPlayer.getPosition() - startDelay;
 	}
 	
 	public float currentBeat() {
-		return bpm * currentPosition();
+		float currentMinutes = currentPosition() / 60;
+		return bpm * currentMinutes;
 	}
 	public String currentBPMAndPosition() {
 		float timePosition = currentPosition();
 		float minutes = musicPlayer.getPosition()/60;
 		float bpmPosition = bpm * minutes;
 		return "BPM pos: "+ bpmPosition+ ", time pos: " + timePosition;
+	}
+	
+	public ArrayList<Note> getNotes() {
+		return chart.getChart();
+	}
+	
+	public int getBPM() {
+		return bpm;
 	}
 }
