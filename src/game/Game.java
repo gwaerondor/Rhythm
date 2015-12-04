@@ -70,6 +70,9 @@ public class Game extends BasicGame {
 					currentlyExploding.add(button);
 				}
 				if (input.isKeyPressed(button)) {
+					int pressedLane = lane.getLaneForButton(button);
+					Note hitNote = currentSong.getNoteCloseToNow(pressedLane);
+					currentSong.destroyNote(hitNote);
 					System.out.println("Button " + Input.getKeyName(button) + " pressed at "
 							+ currentSong.currentBPMAndPosition());
 				}

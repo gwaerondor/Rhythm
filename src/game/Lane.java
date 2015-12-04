@@ -74,8 +74,8 @@ public class Lane {
 	private int getYPositionForNote(float currentBeat, float targetBeat, int bpm) {
 		return (int) (SPEED_MOD * bpm*(currentBeat - targetBeat))+550;
 	}
-
-	private int getLaneForButton(int button) {
+	
+	public int getLaneForButton(int button) {
 		for (int i = 0; i < sublanes.length; i++) {
 			if (sublanes[i] == button) {
 				return i;
@@ -83,7 +83,7 @@ public class Lane {
 		}
 		return -1;
 	}
-
+	
 	public void drawNote(int lane, float currentBeat, int bpm) {
 		noteImage.draw(getXPositionForSublane(lane), 50 + (currentBeat), widthOfSubLanes, 6);
 	}
@@ -98,6 +98,18 @@ public class Lane {
 		}
 	}
 
+	public boolean noteShouldBeDrawn(Note note, float currentBeat, int bpm) {
+		int yPos = getYPositionForNote(currentBeat, note.getTargetBeat(), bpm);
+		if(yPos > 30){
+			if(yPos < 600) {
+				if(!note.isDestroyed()){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	private int getStartPositionForButton(int button) {
 		int laneNumber = getLaneForButton(button);
 		return 50 + (laneNumber * (widthOfSubLanes + laneSeparator.getWidth()));
