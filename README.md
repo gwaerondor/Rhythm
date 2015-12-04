@@ -8,4 +8,4 @@ The amount of "lanes" and the mapping from buttons to lanes are highly adjustabl
 
 It requires the Slick2D libraries to compile and run.
 
-It is very, very, very incomplete, and lacks even basic gameplay at the moment.
+It is still very, very incomplete, and has only very basic gameplay in place.
