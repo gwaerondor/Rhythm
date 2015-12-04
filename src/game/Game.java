@@ -50,6 +50,7 @@ public class Game extends BasicGame {
 		currentlyExploding.clear();
 
 		if (currentSong == null) {
+			combo = 0;
 			if (input.isKeyPressed(Input.KEY_1)) {
 				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg", (float) 0.0);
 				currentNotes = currentSong.getNotes();
