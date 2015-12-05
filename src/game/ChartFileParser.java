@@ -38,9 +38,12 @@ public class ChartFileParser {
 			String[] parts = line.split(":");
 			String laneString = parts[1];
 			String beatString = parts[0];
+			String[] multipleLanes = laneString.split(",");
 			float beat = Float.parseFloat(beatString);
-			int lane = Integer.parseInt(laneString);
-			chart.add(new Note(lane, beat));
+			for(String l : multipleLanes) {
+				int lane = Integer.parseInt(l);
+				chart.add(new Note(lane, beat));				
+			}
 		}
 		return chart;
 	}

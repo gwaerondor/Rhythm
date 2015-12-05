@@ -20,6 +20,9 @@ public class Game extends BasicGame {
 	ArrayList<Integer> currentlyExploding;
 	ArrayList<Note> currentNotes;
 	private int combo;
+	private String buttonInfo;
+	private Score score;
+	private int scoreXPosition;
 	
 	public Game(String gamename) {
 		super(gamename);
@@ -36,15 +39,26 @@ public class Game extends BasicGame {
 		sublaneButtons[5] = Input.KEY_N;
 		sublaneButtons[6] = Input.KEY_M;
 		sublaneButtons[7] = Input.KEY_COMMA;
-
+		buttonInfo = getButtonInfo();
 		songBanners = new Image[2];
 		songBanners[0] = new Image("graphics/Starmine_banner.png");
 		songBanners[1] = new Image("graphics/Hana_Ranman_banner.png");
 		currentlyExploding = new ArrayList<Integer>();
 		lane = new Lane(POSITION_OF_NOTE_LINE, sublaneButtons, 40);
+		score = new Score();
+		scoreXPosition = lane.getRightEdge() + 20;
 		combo = 0;
 	}
 
+	private String getButtonInfo(){
+		String result = "Lane count: ";
+		result += sublaneButtons.length + "\nButtons (left to right): ";
+		for(int button : sublaneButtons) {
+			result += Input.getKeyName(button) + ", ";
+		}
+		return result.substring(0,result.length()-2);
+	}
+	
 	public void update(GameContainer gc, int i) throws SlickException {
 		Input input = gc.getInput();
 		currentlyExploding.clear();
@@ -52,10 +66,12 @@ public class Game extends BasicGame {
 		if (currentSong == null) {
 			combo = 0;
 			if (input.isKeyPressed(Input.KEY_1)) {
+				score.reset();
 				currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg", (float) 0.0);
 				currentNotes = currentSong.getNotes();
 				currentSong.playSong();
 			} else if (input.isKeyPressed(Input.KEY_2)) {
+				score.reset();
 				currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg",
 						(float) 0.0);
 				currentNotes = currentSong.getNotes();
@@ -87,8 +103,10 @@ public class Game extends BasicGame {
 					if (hitNote != null) {
 						lane.hit(currentBeat);
 						combo++;
+						score.ok();
 					} else {
 						lane.bad(currentBeat);
+						score.bad();
 					}
 					System.out.println("Button " + Input.getKeyName(button) + " pressed at "
 							+ currentSong.currentBPMAndPosition());
@@ -100,6 +118,7 @@ public class Game extends BasicGame {
 					missedNotes.add(note);
 					combo = 0;
 					lane.miss(currentSong.currentBeat());
+					score.miss();
 				}
 			}
 			
@@ -112,6 +131,7 @@ public class Game extends BasicGame {
 	public void render(GameContainer gc, Graphics g) throws SlickException {
 		if (currentSong != null) {
 			g.drawString(currentSong.toString(), 100, 10);
+			g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 50);
 			lane.draw();
 			lane.drawExplosions(currentlyExploding);
 			lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
@@ -125,6 +145,7 @@ public class Game extends BasicGame {
 		} else {
 			g.drawString("Press number keys to start a song. Press P to return to this menu.", 100, 10);
 			g.drawString("Speedmod: x" + lane.getSpeedMod() + "(set with up/down arrows)", 100, 30);
+			g.drawString(buttonInfo, 100, 550);
 			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
 			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);
 			songBanners[0].draw(100, 50);

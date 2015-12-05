@@ -42,6 +42,10 @@ public class Lane {
 	public int getYPositionOfNoteMark() {
 		return yPositionOfNoteMark;
 	}
+	
+	public int getRightEdge() {
+		return 50 + (sublanes.length * widthOfSubLanes) + (sublanes.length+2) * laneSeparator.getWidth();
+	}
 
 	public void draw() {
 		drawNoteLines();
