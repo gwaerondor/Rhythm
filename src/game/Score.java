@@ -5,6 +5,8 @@ public class Score {
 	int bad;
 	int miss;
 	int score;
+	int moneyScore;
+	int combo;
 	
 	public Score() {
 		ok = 0;
@@ -16,16 +18,21 @@ public class Score {
 	public void ok() {
 		ok ++;
 		score += 3;
+		combo ++;
 	}
 	
 	public void bad() {
 		bad ++;
-		score -= 1;
 	}
 	
 	public void miss() {
 		miss ++;
 		score -= 2;
+		combo = 0;
+	}
+	
+	public int getCombo() {
+		return combo;
 	}
 	
 	public String toString(){
@@ -37,5 +44,6 @@ public class Score {
 		bad = 0;
 		miss = 0;
 		score = 0;
+		combo = 0;
 	}
 }
