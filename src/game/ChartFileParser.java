@@ -21,8 +21,6 @@ public class ChartFileParser {
 				stringBuffer.append("\n");
 			}
 			fileReader.close();
-			System.out.println("Contents of file:");
-			System.out.println(stringBuffer.toString());
 			return stringBuffer.toString();
 		} catch (IOException e) {
 			e.printStackTrace();

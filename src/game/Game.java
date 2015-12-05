@@ -87,6 +87,7 @@ public class Game extends BasicGame {
 		if (input.isKeyPressed(Input.KEY_P)) {
 			currentSong.stopSong();
 			currentSong = null;
+			lane.clearDisplays();
 		}
 
 		if (currentSong != null) {

@@ -22,7 +22,6 @@ public class Song {
 		this.location = location;
 		this.startDelay = startDelay;
 		this.chart = ChartFileParser.getChartFromFile(location + ".chart");
-		System.out.println(chart);
 	}
 
 	public String toString() {
@@ -39,7 +38,7 @@ public class Song {
 	}
 
 	public void stopSong() {
-		musicPlayer.fade(2500, 0, true);
+		musicPlayer.fade(2000, 0, true);
 	}
 
 	public float currentPosition() {
