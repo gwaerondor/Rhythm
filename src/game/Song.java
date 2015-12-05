@@ -7,8 +7,8 @@ import org.newdawn.slick.SlickException;
 
 public class Song {
 
-	private final float GREAT_TIMING = (float) 0.03;
-	private final float OK_TIMING = (float) 0.15;
+	private final float GREAT_TIMING = (float) 0.045;
+	private final float OK_TIMING = (float) 0.09;
 	
 	private int bpm;
 	private String songName;

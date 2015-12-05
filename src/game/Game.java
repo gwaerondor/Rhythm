@@ -68,10 +68,6 @@ public class Game extends BasicGame {
 			currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg", (float) 0.0);
 			currentNotes = currentSong.getNotes();
 			currentSong.playSong();
-		} else if (input.isKeyPressed(Input.KEY_UP)) {
-			lane.increaseSpeedMod();
-		} else if (input.isKeyPressed(Input.KEY_DOWN)) {
-			lane.decreaseSpeedMod();
 		}
 	}
 
@@ -79,6 +75,14 @@ public class Game extends BasicGame {
 		currentSong.stopSong();
 		currentSong = null;
 		lane.clearDisplays();
+	}
+
+	private void checkForSpeedModInput(Input input) {
+		if (input.isKeyPressed(Input.KEY_UP)) {
+			lane.increaseSpeedMod();
+		} else if (input.isKeyPressed(Input.KEY_DOWN)) {
+			lane.decreaseSpeedMod();
+		}
 	}
 
 	private void checkForPlayInput(Input input) {
@@ -130,6 +134,7 @@ public class Game extends BasicGame {
 		Input input = gc.getInput();
 		currentlyExploding.clear();
 
+		checkForSpeedModInput(input);
 		if (currentSong == null) {
 			checkForSongSelection(input);
 		} else if (input.isKeyPressed(Input.KEY_P)) {
@@ -141,7 +146,7 @@ public class Game extends BasicGame {
 	}
 
 	private void renderSong(Graphics g) {
-		g.drawString(currentSong.toString(), 100, 10);
+		g.drawString(currentSong.toString() + " Speedmod: x" + lane.getSpeedMod(), 100, 10);
 		g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 85);
 		lane.draw();
 		lane.drawExplosions(currentlyExploding);
