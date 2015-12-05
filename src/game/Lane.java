@@ -15,10 +15,12 @@ public class Lane {
 	private Image okImage;
 	private Image missImage;
 	private Image badImage;
+	private Image greatImage;
 	private int[] sublanes;
 	private boolean displayOK;
 	private boolean displayMiss;
 	private boolean displayBad;
+	private boolean displayGreat;
 	private float displayTime;
 
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
@@ -34,6 +36,7 @@ public class Lane {
 			this.okImage = new Image("graphics/ok.png");
 			this.missImage = new Image("graphics/miss.png");
 			this.badImage = new Image("graphics/bad.png");
+			this.greatImage = new Image("graphics/great.png");
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
@@ -131,6 +134,7 @@ public class Lane {
 		displayOK = false;
 		displayMiss = false;
 		displayBad = false;
+		displayGreat = false;
 	}
 
 	public void drawOK() {
@@ -148,6 +152,12 @@ public class Lane {
 	public void drawBad() {
 		if (displayBad == true) {
 			badImage.draw(250, yPositionOfNoteMark / 2);
+		}
+	}
+	
+	public void drawGreat() {
+		if (displayGreat == true) {
+			greatImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
 
@@ -168,7 +178,13 @@ public class Lane {
 		return 50 + (laneNumber * (widthOfSubLanes + laneSeparator.getWidth()));
 	}
 
-	public void hit(float beat) {
+	public void greatHit(float beat) {
+		clearDisplays();
+		displayGreat = true;
+		displayTime = beat;
+	}
+	
+	public void okHit(float beat) {
 		clearDisplays();
 		displayOK = true;
 		displayTime = beat;

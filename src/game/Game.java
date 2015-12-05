@@ -93,8 +93,13 @@ public class Game extends BasicGame {
 				Note hitNote = currentSong.getNoteCloseToNow(pressedLane);
 				currentSong.destroyNote(hitNote);
 				if (hitNote != null) {
-					lane.hit(currentBeat);
-					score.ok();
+					if (Math.abs(currentBeat - hitNote.getTargetBeat()) < 0.10) {
+						lane.greatHit(currentBeat);
+						score.great();
+					} else {
+						lane.okHit(currentBeat);
+						score.ok();
+					}
 				} else {
 					lane.bad(currentBeat);
 					score.bad();
@@ -138,28 +143,36 @@ public class Game extends BasicGame {
 		}
 	}
 
+	private void renderSong(Graphics g) {
+		g.drawString(currentSong.toString(), 100, 10);
+		g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 50);
+		lane.draw();
+		lane.drawExplosions(currentlyExploding);
+		lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
+		lane.drawGreat();
+		lane.drawOK();
+		lane.drawMiss();
+		lane.drawBad();
+		if (score.getCombo() > 1) {
+			g.drawString("" + score.getCombo() + " COMBO", 250, lane.getYPositionOfNoteMark() / 2 + 30);
+		}
+	}
+
+	private void renderMenu(Graphics g) {
+		g.drawString("Press number keys to start a song. Press P to return to this menu.", 100, 10);
+		g.drawString("Speedmod: x" + lane.getSpeedMod() + "(set with up/down arrows)", 100, 30);
+		g.drawString(buttonInfo, 100, 550);
+		g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
+		g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);
+		songBanners[0].draw(100, 50);
+		songBanners[1].draw(100, 50 + songBanners[0].getHeight());
+	}
+
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		if (currentSong != null) {
-			g.drawString(currentSong.toString(), 100, 10);
-			g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 50);
-			lane.draw();
-			lane.drawExplosions(currentlyExploding);
-			lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
-			lane.drawOK();
-			lane.drawMiss();
-			lane.drawBad();
-			if (score.getCombo() > 1) {
-				g.drawString("" + score.getCombo() + " COMBO", 250, lane.getYPositionOfNoteMark() / 2 + 30);
-			}
-			// lane.drawNote(4,currentSong.currentBeat());
+		if (currentSong == null) {
+			renderMenu(g);
 		} else {
-			g.drawString("Press number keys to start a song. Press P to return to this menu.", 100, 10);
-			g.drawString("Speedmod: x" + lane.getSpeedMod() + "(set with up/down arrows)", 100, 30);
-			g.drawString(buttonInfo, 100, 550);
-			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
-			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);
-			songBanners[0].draw(100, 50);
-			songBanners[1].draw(100, 50 + songBanners[0].getHeight());
+			renderSong(g);
 		}
 	}
 

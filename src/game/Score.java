@@ -1,6 +1,7 @@
 package game;
 
 public class Score {
+	int great;
 	int ok;
 	int bad;
 	int miss;
@@ -9,15 +10,22 @@ public class Score {
 	int combo;
 	
 	public Score() {
+		great = 0;
 		ok = 0;
 		bad = 0;
 		miss = 0;
 		score = 0;
 	}
 	
+	public void great() {
+		great ++;
+		combo ++;
+		score += 4;
+	}
+	
 	public void ok() {
 		ok ++;
-		score += 3;
+		score += 2;
 		combo ++;
 	}
 	
@@ -36,10 +44,11 @@ public class Score {
 	}
 	
 	public String toString(){
-		return "  OK: " + ok + "\nMiss: " + miss + "\n Bad: " + bad + "\nTotal score: " + score;
+		return "Great: " + great + "\n   OK: " + ok + "\n Miss: " + miss + "\n  Bad: " + bad + "\nTotal score: " + score;
 	}
 	
 	public void reset() {
+		great = 0;
 		ok = 0;
 		bad = 0;
 		miss = 0;
