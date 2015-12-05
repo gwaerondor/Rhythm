@@ -135,6 +135,8 @@ public class Game extends BasicGame {
 		currentlyExploding.clear();
 
 		checkForSpeedModInput(input);
+		lane.catchUpToTargetSpeedMod();
+		
 		if (currentSong == null) {
 			checkForSongSelection(input);
 		} else if (input.isKeyPressed(Input.KEY_P)) {

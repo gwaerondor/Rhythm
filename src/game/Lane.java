@@ -22,12 +22,14 @@ public class Lane {
 	private boolean displayBad;
 	private boolean displayGreat;
 	private float displayTime;
+	private float targetSpeedMod;
 
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
 		this.yPositionOfNoteMark = yPositionOfNoteMark;
 		this.sublanes = sublanes;
 		this.widthOfSubLanes = widthOfSubLanes;
 		this.speedMod = 1;
+		this.targetSpeedMod = 1;
 		loadImages();
 	}
 
@@ -98,17 +100,28 @@ public class Lane {
 	}
 
 	public void increaseSpeedMod() {
-		speedMod = speedMod + (float) 0.25;
+		targetSpeedMod = targetSpeedMod + (float) 0.25;
 	}
 
 	public void decreaseSpeedMod() {
-		if (speedMod > 0.25) {
-			speedMod = speedMod - (float) 0.25;
+		if (targetSpeedMod > 0.25) {
+			targetSpeedMod = targetSpeedMod - (float) 0.25;
+		}
+	}
+	
+	public void catchUpToTargetSpeedMod() {
+		if (Math.abs(speedMod - targetSpeedMod) < 0.02) {
+			speedMod = targetSpeedMod;
+		}
+		else if(speedMod < targetSpeedMod) {
+			speedMod += 0.025;
+		} else if (speedMod > targetSpeedMod) {
+			speedMod -= 0.025;
 		}
 	}
 
 	public float getSpeedMod() {
-		return speedMod;
+		return targetSpeedMod;
 	}
 
 	public int getLaneForButton(int button) {
