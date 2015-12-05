@@ -137,28 +137,35 @@ public class Lane {
 		displayGreat = false;
 	}
 
-	public void drawOK() {
+	private void drawOK() {
 		if (displayOK == true) {
 			okImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
 
-	public void drawMiss() {
+	private void drawMiss() {
 		if (displayMiss == true) {
 			missImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
 
-	public void drawBad() {
+	private void drawBad() {
 		if (displayBad == true) {
 			badImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
 	
-	public void drawGreat() {
+	private void drawGreat() {
 		if (displayGreat == true) {
 			greatImage.draw(250, yPositionOfNoteMark / 2);
 		}
+	}
+	
+	public void drawGrades() {
+		drawMiss();
+		drawBad();
+		drawOK();
+		drawGreat();
 	}
 
 	public boolean noteShouldBeDrawn(Note note, float currentBeat, int bpm) {
@@ -178,32 +185,32 @@ public class Lane {
 		return 50 + (laneNumber * (widthOfSubLanes + laneSeparator.getWidth()));
 	}
 
-	public void greatHit(float beat) {
+	public void greatHit(float time) {
 		clearDisplays();
 		displayGreat = true;
-		displayTime = beat;
+		displayTime = time;
 	}
 	
-	public void okHit(float beat) {
+	public void okHit(float time) {
 		clearDisplays();
 		displayOK = true;
-		displayTime = beat;
+		displayTime = time;
 	}
 
-	public void miss(float beat) {
+	public void miss(float time) {
 		clearDisplays();
 		displayMiss = true;
-		displayTime = beat;
+		displayTime = time;
 	}
 	
-	public void bad(float beat) {
+	public void bad(float time) {
 		clearDisplays();
 		displayBad = true;
-		displayTime = beat;
+		displayTime = time;
 	}
 
-	public void updateTimer(float newBeat) {
-		if (displayTime - newBeat < -1.5) {
+	public void updateTimer(float newTime) {
+		if (displayTime - newTime < -1.5) {
 			clearDisplays();
 		}
 	}

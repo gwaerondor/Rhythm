@@ -28,7 +28,7 @@ public class ChartFileParser {
 		}
 	}
 	
-	public static ArrayList<Note> getChartFromFile(String filePath) {
+	public static ArrayList<Note> getChartFromFile(String filePath, int bpm) {
 		ArrayList<Note> chart = new ArrayList<Note>();
 		String textChart = parse(filePath);
 		String[] lines = textChart.split("\n");
@@ -40,7 +40,7 @@ public class ChartFileParser {
 			float beat = Float.parseFloat(beatString);
 			for(String l : multipleLanes) {
 				int lane = Integer.parseInt(l);
-				chart.add(new Note(lane, beat));				
+				chart.add(new Note(lane, beat, bpm));				
 			}
 		}
 		return chart;

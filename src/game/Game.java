@@ -45,7 +45,7 @@ public class Game extends BasicGame {
 		currentlyExploding = new ArrayList<Integer>();
 		lane = new Lane(POSITION_OF_NOTE_LINE, sublaneButtons, 40);
 		score = new Score();
-		scoreXPosition = lane.getRightEdge() + 20;
+		scoreXPosition = lane.getRightEdge() + 10;
 	}
 
 	private String getButtonInfo() {
@@ -82,28 +82,30 @@ public class Game extends BasicGame {
 	}
 
 	private void checkForPlayInput(Input input) {
-		float currentBeat = currentSong.currentBeat();
-		lane.updateTimer(currentBeat);
+		float currentTime = currentSong.currentPosition();
+		lane.updateTimer(currentTime);
 		for (int button : sublaneButtons) {
 			if (input.isKeyDown(button)) {
 				currentlyExploding.add(button);
 			}
 			if (input.isKeyPressed(button)) {
 				int pressedLane = lane.getLaneForButton(button);
-				Note hitNote = currentSong.getNoteCloseToNow(pressedLane);
-				currentSong.destroyNote(hitNote);
+				Note hitNote = currentSong.tryToGetGreatFromLane(pressedLane);
 				if (hitNote != null) {
-					if (Math.abs(currentBeat - hitNote.getTargetBeat()) < 0.10) {
-						lane.greatHit(currentBeat);
-						score.great();
-					} else {
-						lane.okHit(currentBeat);
-						score.ok();
-					}
+					lane.greatHit(currentTime);
+					score.great();
 				} else {
-					lane.bad(currentBeat);
-					score.bad();
+					hitNote = currentSong.tryToGetOKFromLane(pressedLane);
+					if (hitNote != null) {
+						lane.okHit(currentTime);
+						score.ok();
+					} else {
+						lane.bad(currentTime);
+						score.bad();
+					}
+
 				}
+				currentSong.destroyNote(hitNote);
 				System.out.println(
 						"Button " + Input.getKeyName(button) + " pressed at " + currentSong.currentBPMAndPosition());
 			}
@@ -113,7 +115,7 @@ public class Game extends BasicGame {
 	public void checkForMisses() {
 		ArrayList<Note> missedNotes = new ArrayList<Note>();
 		for (Note note : currentSong.getNotes()) {
-			if (note.getTargetBeat() < currentSong.currentBeat() - 0.5) {
+			if (note.getTargetSecond() < currentSong.currentPosition() - 0.15) {
 				missedNotes.add(note);
 				lane.miss(currentSong.currentBeat());
 				score.miss();
@@ -130,29 +132,21 @@ public class Game extends BasicGame {
 
 		if (currentSong == null) {
 			checkForSongSelection(input);
-		}
-
-		// else if (currentSong != null) {
-		else {
-			if (input.isKeyPressed(Input.KEY_P)) {
-				stopSong();
-			} else {
-				checkForPlayInput(input);
-				checkForMisses();
-			}
+		} else if (input.isKeyPressed(Input.KEY_P)) {
+			stopSong();
+		} else {
+			checkForPlayInput(input);
+			checkForMisses();
 		}
 	}
 
 	private void renderSong(Graphics g) {
 		g.drawString(currentSong.toString(), 100, 10);
-		g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 50);
+		g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 85);
 		lane.draw();
 		lane.drawExplosions(currentlyExploding);
 		lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
-		lane.drawGreat();
-		lane.drawOK();
-		lane.drawMiss();
-		lane.drawBad();
+		lane.drawGrades();
 		if (score.getCombo() > 1) {
 			g.drawString("" + score.getCombo() + " COMBO", 250, lane.getYPositionOfNoteMark() / 2 + 30);
 		}

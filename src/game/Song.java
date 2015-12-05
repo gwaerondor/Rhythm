@@ -7,6 +7,9 @@ import org.newdawn.slick.SlickException;
 
 public class Song {
 
+	private final float GREAT_TIMING = (float) 0.03;
+	private final float OK_TIMING = (float) 0.15;
+	
 	private int bpm;
 	private String songName;
 	private String artistName;
@@ -21,7 +24,7 @@ public class Song {
 		this.artistName = artistName;
 		this.location = location;
 		this.startDelay = startDelay;
-		this.chart = ChartFileParser.getChartFromFile(location + ".chart");
+		this.chart = ChartFileParser.getChartFromFile(location + ".chart", bpm);
 	}
 
 	public String toString() {
@@ -65,10 +68,22 @@ public class Song {
 		return bpm;
 	}
 
-	public Note getNoteCloseToNow(int lane) {
+	public Note tryToGetGreatFromLane(int lane) {
+		return getNoteCloseToNow(lane, GREAT_TIMING);
+	}
+	
+	public Note tryToGetOKFromLane(int lane) {
+		return getNoteCloseToNow(lane, OK_TIMING);
+	}
+	
+	private Note getNoteCloseToNow(int lane, float timing) {
+		float beatsPerSecond = (float) bpm /(float) 60.0;
+		float secondsPerBeat = 1/beatsPerSecond;
+		float targetSecond;
 		for (Note note : chart) {
 			float targetBeat = note.getTargetBeat();
-			if (Math.abs(currentBeat() - targetBeat) < 0.5) {
+			targetSecond = secondsPerBeat * targetBeat;
+			if (Math.abs(currentPosition() - targetSecond) < timing) {
 				if (note.getLane() == lane) {
 					return note;
 				}
@@ -78,6 +93,8 @@ public class Song {
 	}
 
 	public void destroyNote(Note note) {
-		chart.remove(note);
+		if(chart.remove(note)) {
+			System.out.println("Removed note with target time " + note.getTargetSecond() + " and target beat " + note.getTargetBeat());
+		}
 	}
 }
