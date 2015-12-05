@@ -5,7 +5,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 public class Lane {
-	private final float SPEED_MOD = (float) 0.75;
+	private float speedMod;
 	private int yPositionOfNoteMark;
 	private int widthOfSubLanes;
 	private Image line;
@@ -14,15 +14,18 @@ public class Lane {
 	private Image noteImage;
 	private Image okImage;
 	private Image missImage;
+	private Image badImage;
 	private int[] sublanes;
 	private boolean displayOK;
 	private boolean displayMiss;
+	private boolean displayBad;
 	private float displayTime;
 
 	public Lane(int yPositionOfNoteMark, int[] sublanes, int widthOfSubLanes) {
 		this.yPositionOfNoteMark = yPositionOfNoteMark;
 		this.sublanes = sublanes;
 		this.widthOfSubLanes = widthOfSubLanes;
+		this.speedMod = 1;
 		try {
 			this.line = new Image("graphics/Note_line.png");
 			this.laneSeparator = new Image("graphics/Lane_separator.png");
@@ -30,6 +33,7 @@ public class Lane {
 			this.noteImage = new Image("graphics/Note.png");
 			this.okImage = new Image("graphics/ok.png");
 			this.missImage = new Image("graphics/miss.png");
+			this.badImage = new Image("graphics/bad.png");
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
@@ -79,7 +83,21 @@ public class Lane {
 	}
 
 	private int getYPositionForNote(float currentBeat, float targetBeat, int bpm) {
-		return (int) (SPEED_MOD * bpm * (currentBeat - targetBeat)) + 550;
+		return (int) (speedMod * bpm * (currentBeat - targetBeat)) + 550;
+	}
+
+	public void increaseSpeedMod() {
+		speedMod = speedMod + (float) 0.25;
+	}
+
+	public void decreaseSpeedMod() {
+		if (speedMod > 0.25) {
+			speedMod = speedMod - (float) 0.25;
+		}
+	}
+
+	public float getSpeedMod() {
+		return speedMod;
 	}
 
 	public int getLaneForButton(int button) {
@@ -108,6 +126,7 @@ public class Lane {
 	public void clearDisplays() {
 		displayOK = false;
 		displayMiss = false;
+		displayBad = false;
 	}
 
 	public void drawOK() {
@@ -119,6 +138,12 @@ public class Lane {
 	public void drawMiss() {
 		if (displayMiss == true) {
 			missImage.draw(250, yPositionOfNoteMark / 2);
+		}
+	}
+
+	public void drawBad() {
+		if (displayBad == true) {
+			badImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
 
@@ -148,6 +173,12 @@ public class Lane {
 	public void miss(float beat) {
 		clearDisplays();
 		displayMiss = true;
+		displayTime = beat;
+	}
+	
+	public void bad(float beat) {
+		clearDisplays();
+		displayBad = true;
 		displayTime = beat;
 	}
 

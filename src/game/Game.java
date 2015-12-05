@@ -60,6 +60,10 @@ public class Game extends BasicGame {
 						(float) 0.0);
 				currentNotes = currentSong.getNotes();
 				currentSong.playSong();
+			} else if (input.isKeyPressed(Input.KEY_UP)) {
+				lane.increaseSpeedMod();
+			} else if (input.isKeyPressed(Input.KEY_DOWN)) {
+				lane.decreaseSpeedMod();
 			}
 
 		}
@@ -83,6 +87,8 @@ public class Game extends BasicGame {
 					if (hitNote != null) {
 						lane.hit(currentBeat);
 						combo++;
+					} else {
+						lane.bad(currentBeat);
 					}
 					System.out.println("Button " + Input.getKeyName(button) + " pressed at "
 							+ currentSong.currentBPMAndPosition());
@@ -111,12 +117,14 @@ public class Game extends BasicGame {
 			lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
 			lane.drawOK();
 			lane.drawMiss();
+			lane.drawBad();
 			if(combo>1){
 				g.drawString("" + combo + " COMBO", 250, lane.getYPositionOfNoteMark()/2+30);
 			}
 			// lane.drawNote(4,currentSong.currentBeat());
 		} else {
-			g.drawString("Press number keys to start a song.", 100, 10);
+			g.drawString("Press number keys to start a song. Press P to return to this menu.", 100, 10);
+			g.drawString("Speedmod: x" + lane.getSpeedMod() + "(set with up/down arrows)", 100, 30);
 			g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
 			g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);
 			songBanners[0].draw(100, 50);
