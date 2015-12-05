@@ -112,7 +112,7 @@ public class Game extends BasicGame {
 			lane.drawOK();
 			lane.drawMiss();
 			if(combo>1){
-				g.drawString("" + combo + " COMBO", 250, lane.getYPositionOfNoteMark()/2+50);
+				g.drawString("" + combo + " COMBO", 250, lane.getYPositionOfNoteMark()/2+30);
 			}
 			// lane.drawNote(4,currentSong.currentBeat());
 		} else {
