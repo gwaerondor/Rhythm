@@ -28,6 +28,10 @@ public class Lane {
 		this.sublanes = sublanes;
 		this.widthOfSubLanes = widthOfSubLanes;
 		this.speedMod = 1;
+		loadImages();
+	}
+
+	private void loadImages() {
 		try {
 			this.line = new Image("graphics/Note_line.png");
 			this.laneSeparator = new Image("graphics/Lane_separator.png");
@@ -45,9 +49,9 @@ public class Lane {
 	public int getYPositionOfNoteMark() {
 		return yPositionOfNoteMark;
 	}
-	
+
 	public int getRightEdge() {
-		return 50 + (sublanes.length * widthOfSubLanes) + (sublanes.length+2) * laneSeparator.getWidth();
+		return 50 + (sublanes.length * widthOfSubLanes) + (sublanes.length + 2) * laneSeparator.getWidth();
 	}
 
 	public void draw() {
@@ -154,13 +158,13 @@ public class Lane {
 			badImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
-	
+
 	private void drawGreat() {
 		if (displayGreat == true) {
 			greatImage.draw(250, yPositionOfNoteMark / 2);
 		}
 	}
-	
+
 	public void drawGrades() {
 		drawMiss();
 		drawBad();
@@ -172,9 +176,7 @@ public class Lane {
 		int yPos = getYPositionForNote(currentBeat, note.getTargetBeat(), bpm);
 		if (yPos > 30) {
 			if (yPos < 600) {
-				if (!note.isDestroyed()) {
-					return true;
-				}
+				return true;
 			}
 		}
 		return false;
@@ -190,7 +192,7 @@ public class Lane {
 		displayGreat = true;
 		displayTime = time;
 	}
-	
+
 	public void okHit(float time) {
 		clearDisplays();
 		displayOK = true;
@@ -202,7 +204,7 @@ public class Lane {
 		displayMiss = true;
 		displayTime = time;
 	}
-	
+
 	public void bad(float time) {
 		clearDisplays();
 		displayBad = true;

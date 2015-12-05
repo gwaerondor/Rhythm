@@ -3,13 +3,11 @@ package game;
 public class Note {
 	private int lane;
 	private float targetBeat;
-	private boolean destroyed;
 	private int bpm;
 	
 	public Note(int lane, float targetBeat, int bpm) {
 		this.lane = lane;
 		this.targetBeat = targetBeat;
-		this.destroyed = false;
 		this.bpm = bpm;
 	}
 
@@ -19,10 +17,6 @@ public class Note {
 
 	public int getLane() {
 		return lane;
-	}
-	
-	public boolean isDestroyed() {
-		return destroyed;
 	}
 
 	public float getTargetSecond() {
