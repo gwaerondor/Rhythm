@@ -14,8 +14,8 @@ import org.newdawn.slick.SlickException;
 public class Game extends BasicGame {
 	private final int POSITION_OF_NOTE_LINE = 550;
 	Song currentSong;
-	Lane lane;
-	int sublaneButtons[];
+	SongInterface songInterface;
+	Lane[] lanes;
 	Image[] songBanners;
 	ArrayList<Integer> currentlyExploding;
 	ArrayList<Note> currentNotes;
@@ -29,30 +29,30 @@ public class Game extends BasicGame {
 
 	public void init(GameContainer gc) throws SlickException {
 		gc.setTargetFrameRate(60);
-		sublaneButtons = new int[8];
-		sublaneButtons[0] = Input.KEY_Z;
-		sublaneButtons[1] = Input.KEY_X;
-		sublaneButtons[2] = Input.KEY_C;
-		sublaneButtons[3] = Input.KEY_V;
-		sublaneButtons[4] = Input.KEY_B;
-		sublaneButtons[5] = Input.KEY_N;
-		sublaneButtons[6] = Input.KEY_M;
-		sublaneButtons[7] = Input.KEY_COMMA;
+		lanes = new Lane[8];
+		lanes[0] = new Lane(Input.KEY_Z, 0, 70);
+		lanes[1] = new Lane(Input.KEY_X, 1, 40);
+		lanes[2] = new Lane(Input.KEY_C, 2, 30);
+		lanes[3] = new Lane(Input.KEY_V, 3, 40);
+		lanes[4] = new Lane(Input.KEY_B, 4, 30);
+		lanes[5] = new Lane(Input.KEY_N, 5, 40);
+		lanes[6] = new Lane(Input.KEY_M, 6, 30);
+		lanes[7] = new Lane(Input.KEY_COMMA, 7, 40);
 		buttonInfo = getButtonInfo();
 		songBanners = new Image[2];
 		songBanners[0] = new Image("graphics/Starmine_banner.png");
 		songBanners[1] = new Image("graphics/Hana_Ranman_banner.png");
 		currentlyExploding = new ArrayList<Integer>();
-		lane = new Lane(POSITION_OF_NOTE_LINE, sublaneButtons, 40);
+		songInterface = new SongInterface(POSITION_OF_NOTE_LINE, lanes);
 		score = new Score();
-		scoreXPosition = lane.getRightEdge() + 10;
+		scoreXPosition = songInterface.getRightEdge() + 10;
 	}
 
 	private String getButtonInfo() {
 		String result = "Lane count: ";
-		result += sublaneButtons.length + "\nButtons (left to right): ";
-		for (int button : sublaneButtons) {
-			result += Input.getKeyName(button) + ", ";
+		result += lanes.length + "\nButtons (left to right): ";
+		for (Lane lane : lanes) {
+			result += Input.getKeyName(lane.getKey()) + ", ";
 		}
 		return result.substring(0, result.length() - 2);
 	}
@@ -74,44 +74,45 @@ public class Game extends BasicGame {
 	private void stopSong() {
 		currentSong.stopSong();
 		currentSong = null;
-		lane.clearDisplays();
+		songInterface.clearDisplays();
 	}
 
 	private void checkForSpeedModInput(Input input) {
 		if (input.isKeyPressed(Input.KEY_UP)) {
-			lane.increaseSpeedMod();
+			songInterface.increaseSpeedMod();
 		} else if (input.isKeyPressed(Input.KEY_DOWN)) {
-			lane.decreaseSpeedMod();
+			songInterface.decreaseSpeedMod();
 		}
 	}
 
 	private void checkForPlayInput(Input input) {
 		float currentTime = currentSong.currentPosition();
-		lane.updateTimer(currentTime);
-		for (int button : sublaneButtons) {
-			if (input.isKeyDown(button)) {
-				currentlyExploding.add(button);
+		songInterface.updateTimer(currentTime);
+		for (Lane lane : lanes) {
+			int key = lane.getKey();
+			if (input.isKeyDown(key)) {
+				currentlyExploding.add(key);
 			}
-			if (input.isKeyPressed(button)) {
-				int pressedLane = lane.getLaneForButton(button);
+			if (input.isKeyPressed(key)) {
+				Lane pressedLane = songInterface.getLaneForButton(key);
 				Note hitNote = currentSong.tryToGetGreatFromLane(pressedLane);
 				if (hitNote != null) {
-					lane.greatHit(currentTime);
+					songInterface.greatHit(currentTime);
 					score.great();
 				} else {
 					hitNote = currentSong.tryToGetOKFromLane(pressedLane);
 					if (hitNote != null) {
-						lane.okHit(currentTime);
+						songInterface.okHit(currentTime);
 						score.ok();
 					} else {
-						lane.bad(currentTime);
+						songInterface.bad(currentTime);
 						score.bad();
 					}
 
 				}
 				currentSong.destroyNote(hitNote);
 				System.out.println(
-						"Button " + Input.getKeyName(button) + " pressed at " + currentSong.currentBPMAndPosition());
+						"Key " + Input.getKeyName(key) + " pressed at " + currentSong.currentBPMAndPosition());
 			}
 		}
 	}
@@ -121,7 +122,7 @@ public class Game extends BasicGame {
 		for (Note note : currentSong.getNotes()) {
 			if (note.getTargetSecond() < currentSong.currentPosition() - 0.15) {
 				missedNotes.add(note);
-				lane.miss(currentSong.currentBeat());
+				songInterface.miss(currentSong.currentBeat());
 				score.miss();
 			}
 		}
@@ -135,7 +136,7 @@ public class Game extends BasicGame {
 		currentlyExploding.clear();
 
 		checkForSpeedModInput(input);
-		lane.catchUpToTargetSpeedMod();
+		songInterface.catchUpToTargetSpeedMod();
 		
 		if (currentSong == null) {
 			checkForSongSelection(input);
@@ -148,20 +149,20 @@ public class Game extends BasicGame {
 	}
 
 	private void renderSong(Graphics g) {
-		g.drawString(currentSong.toString() + " Speedmod: x" + lane.getSpeedMod(), 100, 10);
-		g.drawString(score.toString(), scoreXPosition, lane.getYPositionOfNoteMark() - 85);
-		lane.draw();
-		lane.drawExplosions(currentlyExploding);
-		lane.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
-		lane.drawGrades();
+		g.drawString(currentSong.toString() + " Speedmod: x" + songInterface.getSpeedMod(), 100, 10);
+		g.drawString(score.toString(), scoreXPosition, songInterface.getYPositionOfNoteMark() - 85);
+		songInterface.draw();
+		songInterface.drawExplosions(currentlyExploding);
+		songInterface.drawNotes(currentNotes, currentSong.currentBeat(), currentSong.getBPM());
+		songInterface.drawGrades();
 		if (score.getCombo() > 1) {
-			g.drawString("" + score.getCombo() + " COMBO", 250, lane.getYPositionOfNoteMark() / 2 + 30);
+			g.drawString("" + score.getCombo() + " COMBO", 250, songInterface.getYPositionOfNoteMark() / 2 + 30);
 		}
 	}
 
 	private void renderMenu(Graphics g) {
 		g.drawString("Press number keys to start a song. Press P to return to this menu.", 100, 10);
-		g.drawString("Speedmod: x" + lane.getSpeedMod() + "(set with up/down arrows)", 100, 30);
+		g.drawString("Speedmod: x" + songInterface.getSpeedMod() + "(set with up/down arrows)", 100, 30);
 		g.drawString(buttonInfo, 100, 550);
 		g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
 		g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);

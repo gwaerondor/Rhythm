@@ -68,15 +68,15 @@ public class Song {
 		return bpm;
 	}
 
-	public Note tryToGetGreatFromLane(int lane) {
+	public Note tryToGetGreatFromLane(Lane lane) {
 		return getNoteCloseToNow(lane, GREAT_TIMING);
 	}
 	
-	public Note tryToGetOKFromLane(int lane) {
+	public Note tryToGetOKFromLane(Lane lane) {
 		return getNoteCloseToNow(lane, OK_TIMING);
 	}
 	
-	private Note getNoteCloseToNow(int lane, float timing) {
+	private Note getNoteCloseToNow(Lane lane, float timing) {
 		float beatsPerSecond = (float) bpm /(float) 60.0;
 		float secondsPerBeat = 1/beatsPerSecond;
 		float targetSecond;
@@ -84,7 +84,7 @@ public class Song {
 			float targetBeat = note.getTargetBeat();
 			targetSecond = secondsPerBeat * targetBeat;
 			if (Math.abs(currentPosition() - targetSecond) < timing) {
-				if (note.getLane() == lane) {
+				if (note.getLane() == lane.getLaneNumber()) {
 					return note;
 				}
 			}
