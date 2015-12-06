@@ -28,7 +28,7 @@ public class Game extends BasicGame {
 	}
 
 	public void init(GameContainer gc) throws SlickException {
-		gc.setTargetFrameRate(60);
+		//gc.setTargetFrameRate(60);
 		Image redNote = new Image("graphics/Red_note.png");
 		Image whiteNote = new Image("graphics/White_note.png");
 		Image blueNote = new Image("graphics/Blue_note.png");
