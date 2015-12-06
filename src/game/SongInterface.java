@@ -57,24 +57,25 @@ public class SongInterface {
 	}
 
 	public void draw() {
-		drawNoteLines();
+		drawNoteLine();
 		drawLaneSeparators();
 	}
 
-	public void drawNoteLines() {
-		int xPos = 50;
+	public void drawNoteLine() {
+		int startXPos = 50;
+		int length = 0;
 		int separatorWidth = laneSeparator.getWidth();
+		length += separatorWidth;
 		for(Lane lane : lanes){
-			line.draw(xPos, yPositionOfNoteMark, lane.getWidth(), line.getHeight());
-			xPos += lane.getWidth() + separatorWidth;
+			length += separatorWidth + lane.getWidth();
 		}
+		line.draw(startXPos-separatorWidth, yPositionOfNoteMark, length, line.getHeight());
 	}
 
 	public void drawLaneSeparators() {
 		int startingYPosition = 30;
-		int lineHeight = line.getHeight();
 		int separatorWidth = laneSeparator.getWidth();
-		int endPosition = yPositionOfNoteMark - startingYPosition + lineHeight;
+		int endPosition = yPositionOfNoteMark - startingYPosition;
 		int xPos = 50 - separatorWidth;
 		for(Lane lane : lanes) {
 			laneSeparator.draw(xPos, startingYPosition, laneSeparator.getWidth(), endPosition);
