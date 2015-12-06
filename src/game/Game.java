@@ -29,15 +29,18 @@ public class Game extends BasicGame {
 
 	public void init(GameContainer gc) throws SlickException {
 		gc.setTargetFrameRate(60);
+		Image redNote = new Image("graphics/Red_note.png");
+		Image whiteNote = new Image("graphics/White_note.png");
+		Image blueNote = new Image("graphics/Blue_note.png");
 		lanes = new Lane[8];
-		lanes[0] = new Lane(Input.KEY_Z, 0, 70);
-		lanes[1] = new Lane(Input.KEY_X, 1, 40);
-		lanes[2] = new Lane(Input.KEY_C, 2, 30);
-		lanes[3] = new Lane(Input.KEY_V, 3, 40);
-		lanes[4] = new Lane(Input.KEY_B, 4, 30);
-		lanes[5] = new Lane(Input.KEY_N, 5, 40);
-		lanes[6] = new Lane(Input.KEY_M, 6, 30);
-		lanes[7] = new Lane(Input.KEY_COMMA, 7, 40);
+		lanes[0] = new Lane(Input.KEY_LCONTROL, 0, 70, redNote);
+		lanes[1] = new Lane(Input.KEY_Z, 1, 40, whiteNote);
+		lanes[2] = new Lane(Input.KEY_S, 2, 30, blueNote);
+		lanes[3] = new Lane(Input.KEY_X, 3, 40, whiteNote);
+		lanes[4] = new Lane(Input.KEY_D, 4, 30, blueNote);
+		lanes[5] = new Lane(Input.KEY_C, 5, 40, whiteNote);
+		lanes[6] = new Lane(Input.KEY_F, 6, 30, blueNote);
+		lanes[7] = new Lane(Input.KEY_V, 7, 40, whiteNote);
 		buttonInfo = getButtonInfo();
 		songBanners = new Image[2];
 		songBanners[0] = new Image("graphics/Starmine_banner.png");
@@ -122,7 +125,7 @@ public class Game extends BasicGame {
 		for (Note note : currentSong.getNotes()) {
 			if (note.getTargetSecond() < currentSong.currentPosition() - 0.15) {
 				missedNotes.add(note);
-				songInterface.miss(currentSong.currentBeat());
+				songInterface.miss(currentSong.currentPosition());
 				score.miss();
 			}
 		}

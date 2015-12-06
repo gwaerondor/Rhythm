@@ -10,7 +10,6 @@ public class SongInterface {
 	private Image line;
 	private Image laneSeparator;
 	private Image explosion;
-	private Image noteImage;
 	private Image okImage;
 	private Image missImage;
 	private Image badImage;
@@ -36,7 +35,6 @@ public class SongInterface {
 			this.line = new Image("graphics/Note_line.png");
 			this.laneSeparator = new Image("graphics/Lane_separator.png");
 			this.explosion = new Image("graphics/Explosion.png");
-			this.noteImage = new Image("graphics/Note.png");
 			this.okImage = new Image("graphics/ok.png");
 			this.missImage = new Image("graphics/miss.png");
 			this.badImage = new Image("graphics/bad.png");
@@ -151,10 +149,6 @@ public class SongInterface {
 		return null;
 	}
 
-	public void drawNote(Lane lane, float currentBeat, int bpm) {
-		noteImage.draw(getXPositionForSublane(lane.getLaneNumber()), 50 + (currentBeat), lane.getWidth(), 6);
-	}
-
 	public void drawNotes(ArrayList<Note> notes, float currentBeat, int bpm) {
 		for (Note note : notes) {
 			int yPos = getYPositionForNote(currentBeat, note.getTargetBeat(), bpm);
@@ -162,7 +156,7 @@ public class SongInterface {
 				int xPos = getXPositionForSublane(note.getLane());
 				Lane lane = getLaneForLaneNumber(note.getLane());
 				int width = lane.getWidth();
-				noteImage.draw(xPos, yPos, width, 6);
+				lane.getNoteImage().draw(xPos, yPos, width, 6);
 			}
 		}
 	}
