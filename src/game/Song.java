@@ -97,4 +97,8 @@ public class Song {
 			System.out.println("Removed note with target time " + note.getTargetSecond() + " and target beat " + note.getTargetBeat());
 		}
 	}
+	
+	public boolean isOver(){
+		return !musicPlayer.playing();
+	}
 }

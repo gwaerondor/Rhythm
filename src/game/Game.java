@@ -114,8 +114,8 @@ public class Game extends BasicGame {
 
 				}
 				currentSong.destroyNote(hitNote);
-				System.out.println(
-						"Key " + Input.getKeyName(key) + " pressed at " + currentSong.currentBPMAndPosition());
+				System.out
+						.println("Key " + Input.getKeyName(key) + " pressed at " + currentSong.currentBPMAndPosition());
 			}
 		}
 	}
@@ -140,15 +140,25 @@ public class Game extends BasicGame {
 
 		checkForSpeedModInput(input);
 		songInterface.catchUpToTargetSpeedMod();
-		
+
 		if (currentSong == null) {
 			checkForSongSelection(input);
-		} else if (input.isKeyPressed(Input.KEY_P)) {
+		} else if (songShouldStop(input)) {
 			stopSong();
 		} else {
 			checkForPlayInput(input);
 			checkForMisses();
 		}
+	}
+
+	private boolean songShouldStop(Input input) {
+		if (input.isKeyPressed(Input.KEY_P)) {
+			return true;
+		}
+		if (currentSong.isOver()) {
+			return true;
+		}
+		return false;
 	}
 
 	private void renderSong(Graphics g) {
