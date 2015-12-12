@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 
@@ -11,6 +12,7 @@ public class Song {
 	private final float OK_TIMING = (float) 0.09;
 	
 	private int bpm;
+	private Image banner;
 	private String songName;
 	private String artistName;
 	private String location;
@@ -25,15 +27,24 @@ public class Song {
 		this.location = location;
 		this.startDelay = startDelay;
 		this.chart = ChartFileParser.getChartFromFile(location + ".chart", bpm);
+		try {
+			this.banner = new Image(location + ".banner.png");
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
 	}
 
+	public Image getBanner() {
+		return this.banner;
+	}
+	
 	public String toString() {
 		return artistName + " - " + songName + " (" + bpm + " BPM)";
 	}
 
 	public void playSong() {
 		try {
-			musicPlayer = new Music(location);
+			musicPlayer = new Music(location + ".ogg");
 			musicPlayer.play();
 		} catch (SlickException e) {
 			e.printStackTrace();
@@ -93,11 +104,9 @@ public class Song {
 	}
 
 	public void destroyNote(Note note) {
-		if(chart.remove(note)) {
-			System.out.println("Removed note with target time " + note.getTargetSecond() + " and target beat " + note.getTargetBeat());
-		}
+		chart.remove(note);
 	}
-	
+			
 	public boolean isOver(){
 		return !musicPlayer.playing();
 	}

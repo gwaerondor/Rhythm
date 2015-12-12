@@ -13,15 +13,17 @@ import org.newdawn.slick.SlickException;
 
 public class Game extends BasicGame {
 	private final int POSITION_OF_NOTE_LINE = 550;
-	Song currentSong;
-	SongInterface songInterface;
-	Lane[] lanes;
-	Image[] songBanners;
-	ArrayList<Integer> currentlyExploding;
-	ArrayList<Note> currentNotes;
+	private Song currentSong;
+	private SongInterface songInterface;
+	private Lane[] lanes;
+	private ArrayList<Integer> currentlyExploding;
+	private ArrayList<Note> currentNotes;
+	private ArrayList<Song> songList;
 	private String buttonInfo;
 	private Score score;
 	private int scoreXPosition;
+	private int currentSongSelectionIndex;
+	private boolean currentlyInSong;
 
 	public Game(String gamename) {
 		super(gamename);
@@ -42,15 +44,22 @@ public class Game extends BasicGame {
 		lanes[6] = new Lane(Input.KEY_F, 6, 30, blueNote);
 		lanes[7] = new Lane(Input.KEY_V, 7, 40, whiteNote);
 		buttonInfo = getButtonInfo();
-		songBanners = new Image[2];
-		songBanners[0] = new Image("graphics/Starmine_banner.png");
-		songBanners[1] = new Image("graphics/Hana_Ranman_banner.png");
 		currentlyExploding = new ArrayList<Integer>();
 		songInterface = new SongInterface(POSITION_OF_NOTE_LINE, lanes);
 		score = new Score();
 		scoreXPosition = songInterface.getRightEdge() + 10;
+		songList = new ArrayList<Song>();
+		loadSongs();
+		currentSongSelectionIndex = 0;
+		currentlyInSong = false;
+		currentSong = songList.get(currentSongSelectionIndex);
 	}
 
+	private void loadSongs() {
+		songList.add(new Song("Starmine", "Ryu*", 182, "songs/starmine", (float) 0.0));
+		songList.add(new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers", (float) 0.0));
+	}
+	
 	private String getButtonInfo() {
 		String result = "Lane count: ";
 		result += lanes.length + "\nButtons (left to right): ";
@@ -61,23 +70,19 @@ public class Game extends BasicGame {
 	}
 
 	private void checkForSongSelection(Input input) {
-		if (input.isKeyPressed(Input.KEY_1)) {
+		if (input.isKeyPressed(Input.KEY_ENTER)) {
 			score.reset();
-			currentSong = new Song("Starmine", "Ryu*", 182, "songs/starmine.ogg", (float) 0.0);
+			currentSong = songList.get(currentSongSelectionIndex);
 			currentNotes = currentSong.getNotes();
+			currentlyInSong = true;
 			currentSong.playSong();
-		} else if (input.isKeyPressed(Input.KEY_2)) {
-			score.reset();
-			currentSong = new Song("Hana Ranman -Flowers-", "TERRA", 160, "songs/Hana_Ranman_Flowers.ogg", (float) 0.0);
-			currentNotes = currentSong.getNotes();
-			currentSong.playSong();
-		}
+		} 
 	}
 
 	private void stopSong() {
 		currentSong.stopSong();
-		currentSong = null;
 		songInterface.clearDisplays();
+		currentlyInSong = false;
 	}
 
 	private void checkForSpeedModInput(Input input) {
@@ -87,8 +92,34 @@ public class Game extends BasicGame {
 			songInterface.decreaseSpeedMod();
 		}
 	}
+	
+	private void checkForSelectionInput(Input input) {
+		if (input.isKeyPressed(Input.KEY_LEFT)) {
+			highlightPreviousSong();
+		} else if (input.isKeyPressed(Input.KEY_RIGHT)) {
+			highlightNextSong();
+		}
+	}
 
-	private void checkForPlayInput(Input input) {
+	private void highlightPreviousSong() {
+		if(currentSongSelectionIndex > 0) {
+			currentSongSelectionIndex --;
+		} else {
+			currentSongSelectionIndex = songList.size() -1;
+		}
+		currentSong = songList.get(currentSongSelectionIndex);
+	}
+	
+	private void highlightNextSong() {
+		if(currentSongSelectionIndex < songList.size() -1) {
+			currentSongSelectionIndex ++;
+		} else {
+			currentSongSelectionIndex = 0;
+		}
+		currentSong = songList.get(currentSongSelectionIndex);
+	}
+
+	private void checkForPlayEvents(Input input) {
 		float currentTime = currentSong.currentPosition();
 		songInterface.updateTimer(currentTime);
 		for (Lane lane : lanes) {
@@ -111,13 +142,11 @@ public class Game extends BasicGame {
 						songInterface.bad(currentTime);
 						score.bad();
 					}
-
 				}
 				currentSong.destroyNote(hitNote);
-				System.out
-						.println("Key " + Input.getKeyName(key) + " pressed at " + currentSong.currentBPMAndPosition());
 			}
 		}
+		checkForMisses();
 	}
 
 	public void checkForMisses() {
@@ -141,13 +170,13 @@ public class Game extends BasicGame {
 		checkForSpeedModInput(input);
 		songInterface.catchUpToTargetSpeedMod();
 
-		if (currentSong == null) {
+		if (currentlyInSong == false) {
 			checkForSongSelection(input);
+			checkForSelectionInput(input);
 		} else if (songShouldStop(input)) {
 			stopSong();
 		} else {
-			checkForPlayInput(input);
-			checkForMisses();
+			checkForPlayEvents(input);
 		}
 	}
 
@@ -174,20 +203,23 @@ public class Game extends BasicGame {
 	}
 
 	private void renderMenu(Graphics g) {
-		g.drawString("Press number keys to start a song. Press P to return to this menu.", 100, 10);
-		g.drawString("Speedmod: x" + songInterface.getSpeedMod() + "(set with up/down arrows)", 100, 30);
+		g.drawString("Press Left/Right to select song, enter to start.\nPress P to return to this menu.", 100, 10);
+		g.drawString("Speedmod: x" + songInterface.getSpeedMod() + "(set with up/down arrows)", 100, 50);
+		g.drawString("Song selection: " + currentSong.toString(), 100, 70);
 		g.drawString(buttonInfo, 100, 550);
-		g.drawString("1:", 80, 50 + songBanners[0].getHeight() / 2);
-		g.drawString("2:", 80, 50 + songBanners[0].getHeight() + songBanners[1].getHeight() / 2);
-		songBanners[0].draw(100, 50);
-		songBanners[1].draw(100, 50 + songBanners[0].getHeight());
+		for(int i = 0; i < songList.size(); i++){
+			Song song = songList.get(i);
+			Image banner = song.getBanner();
+			g.drawString(""+i+":", 80, 100 + (i*banner.getHeight()));
+			song.getBanner().draw(100, 100 + (i*banner.getHeight()));
+		}
 	}
 
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		if (currentSong == null) {
-			renderMenu(g);
-		} else {
+		if (currentlyInSong) {
 			renderSong(g);
+		} else {
+			renderMenu(g);
 		}
 	}
 
